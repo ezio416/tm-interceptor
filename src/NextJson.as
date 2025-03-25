@@ -1,5 +1,5 @@
 // c 2025-03-22
-// m 2025-03-23
+// m 2025-03-25
 
 Json::Value@ lookup     = Json::Object();
 const string lookupFile = IO::FromDataFolder("OpenplanetNext.json");
@@ -121,12 +121,10 @@ void FilterLookupNoMethodsAsync() {
 
     string[]@ classNamesFiltered = lookupWithMethods.GetKeys();
     for (uint i = 0; i < classNamesFiltered.Length; i++) {
-        Json::Value@ classVal = lookupWithMethods[classNamesFiltered[i]];
-        GameClass@ Class = GameClass(classVal, classNamesFiltered[i]);
-        classes.Set(Class.name, @Class);
-
-        for (uint j = 0; j < Class.methods.Length; j++)
-            Class.methods[j].GenerateInterceptCode();
+        AddClass(GameClass(
+            lookupWithMethods[classNamesFiltered[i]],
+            classNamesFiltered[i]
+        ));
 
         yield();
     }
