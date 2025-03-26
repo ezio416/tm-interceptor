@@ -1,7 +1,8 @@
 // c 2025-03-25
-// m 2025-03-25
+// m 2025-03-26
 
 dictionary@ classes = dictionary();
+GameClass@[] _classes;
 
 class GameClass {
     ClassMethod@[] methods;
@@ -26,6 +27,8 @@ class GameClass {
 
             methods.InsertLast(method);
         }
+
+        methods.Sort(SortClassMethod);
     }
 
     void Start() final {
@@ -49,4 +52,5 @@ void AddClass(GameClass@ Class) {
     }
 
     classes.Set(Class.name, @Class);
+    _classes.InsertLast(@Class);
 }

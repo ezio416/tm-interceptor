@@ -1,5 +1,5 @@
 // c 2025-03-22
-// m 2025-03-25
+// m 2025-03-26
 
 Json::Value@ lookup     = Json::Object();
 const string lookupFile = IO::FromDataFolder("OpenplanetNext.json");
@@ -128,6 +128,8 @@ void FilterLookupNoMethodsAsync() {
 
         yield();
     }
+
+    _classes.Sort(SortGameClass);
 
     trace("built classes after " + (Time::Now - start2) + "ms");
 }

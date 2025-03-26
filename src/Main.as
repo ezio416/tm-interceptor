@@ -1,13 +1,15 @@
 // c 2025-03-20
-// m 2025-03-25
+// m 2025-03-26
 
-const string  pluginColor = "\\$FFF";
-const string  pluginIcon  = Icons::Code;
-Meta::Plugin@ pluginMeta  = Meta::ExecutingPlugin();
-const string  generatedFileSource = pluginMeta.SourcePath + "/src/Generated.as";
-const string  generatedFileStorage = IO::FromStorageFolder("Generated.as");
-const string  pluginTitle = pluginColor + pluginIcon + "\\$G " + pluginMeta.Name;
-const float   scale       = UI::GetScale();
+const string  generatedFileStorage = IO::FromStorageFolder("_Generated.as");
+const string  pluginColor          = "\\$FFF";
+const string  pluginIcon           = Icons::Code;
+Meta::Plugin@ pluginMeta           = Meta::ExecutingPlugin();
+const string  pluginTitle          = pluginColor + pluginIcon + "\\$G " + pluginMeta.Name;
+const string  pluginPath           = pluginMeta.SourcePath;
+const string  generatedFileSource  = pluginPath + "/src/_Generated.as";
+const string  tomlFile             = pluginPath + "/info.toml";
+const float   scale                = UI::GetScale();
 
 void OnDestroyed() { StopInterceptions(); }
 void OnDisabled()  { StopInterceptions(); }
@@ -39,9 +41,16 @@ void RenderMenu() {
 }
 
 void RenderWindow() {
-    string[]@ classNames = classes.GetKeys();
-    for (uint i = 0; i < classNames.Length; i++) {
-        GameClass@ Class = cast<GameClass@>(classes[classNames[i]]);
+#if GENERATED
+    if (UI::Button("UnApply"))
+        UnApplyGenerated();
+#else
+    if (UI::Button("Apply"))
+        ApplyGenerated();
+#endif
+
+    for (uint i = 0; i < _classes.Length; i++) {
+        GameClass@ Class = _classes[i];
 
         if (UI::CollapsingHeader(Class.name + " (" + Class.methods.Length + ")")) {
             UI::Indent(scale * 25.0f);
@@ -79,7 +88,8 @@ void GenerateCodeAsync() {
 
             gen += string::Join(method.GenerateLines(), '\n');
 
-            CreateMethod += '\t\tif (parent.name == "' + Class.name + '" && name == "' + method.name + '")\n\t\t\treturn Interceptor::Class_' + Class.name + '::Method_' + method.name + '(parent, name, method);\n';
+            CreateMethod += '\t\tif (parent.name == "' + Class.name + '" && name == "' + method.name
+            + '")\n\t\t\treturn Interceptor::Class_' + Class.name + '::Method_' + method.name + '(parent, name, method);\n\n';
         }
 
         gen += '\n';
@@ -87,11 +97,43 @@ void GenerateCodeAsync() {
         yield();
     }
 
-    CreateMethod += '\n\t\treturn null;\n\t}\n}\n';
+    CreateMethod += '\t\treturn null;\n\t}\n}\n';
 
     IO::File file(generatedFileStorage, IO::FileMode::Write);
     file.Write(gen + '\n' + CreateMethod);
     file.Close();
 
     trace("generated after " + (Time::Now - start) + "ms");
+}
+
+void ApplyGenerated() {
+    if (IO::FileExists(generatedFileStorage))
+        IO::Copy(generatedFileStorage, generatedFileSource);
+    else
+        warn("no file generated yet");
+
+    IO::File toml(tomlFile, IO::FileMode::Read);
+    string contents = toml.ReadToEnd();
+    toml.Close();
+
+    toml.Open(IO::FileMode::Write);
+    toml.Write(contents.Replace("#defines", "defines"));
+    toml.Close();
+
+    Reloader::ReloadMe();
+}
+
+void UnApplyGenerated() {
+    if (IO::FileExists(generatedFileSource))
+        IO::Delete(generatedFileSource);
+
+    IO::File toml(tomlFile, IO::FileMode::Read);
+    string contents = toml.ReadToEnd();
+    toml.Close();
+
+    toml.Open(IO::FileMode::Write);
+    toml.Write(contents.Replace("defines", "#defines"));
+    toml.Close();
+
+    Reloader::ReloadMe();
 }

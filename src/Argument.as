@@ -1,5 +1,5 @@
 // c 2025-03-25
-// m 2025-03-25
+// m 2025-03-26
 
 class MethodArgument {
     int          index      = -1;
@@ -22,40 +22,40 @@ class MethodArgument {
 
         if (type.EndsWith("@")) {  // nod
             return {
-                'const ' + type + ' ' + name + ' = cast<' + type + '>(stack.CurrentNod(' + stackIndex + '));',
+                'const ' + type + ' const ' + name + ' = cast<' + type + '>(stack.CurrentNod(' + stackIndex + '));',
                 'print("' + type + ' ' + name + ': " + (' + name + ' !is null ? "valid" : "null"));'
-            };;
+            };
 
         } else if (type.Contains("::E")) {  // enum
             return {
                 'const ' + type + ' ' + name + ' = ' + type + '(stack.CurrentEnum(' + stackIndex + '));',
                 'print("' + type + ' ' + name + ': " + tostring(' + name + '));'
-            };;
+            };
 
         } else if (type.Contains("MwFastBuffer<")) {
             if (type.Contains("<wstring>")) {
                 return {
                     'const MwFastBuffer<wstring> ' + name + ' = stack.CurrentBufferWString(' + stackIndex + ');',
                     'print("buffer<wstring> ' + name + ': length " + ' + name + '.Length);'
-                };;
+                };
 
             } else {
                 return {
                     'warn("' + type + ' ' + name + ': unsupported type");'
-                };;
+                };
             }
 
         } else if (type == "bool") {
             return {
                 'const bool ' + name + ' = stack.CurrentBool(' + stackIndex + ');',
                 'print("' + type + ' ' + name + ': " + ' + name + ');'
-            };;
+            };
 
         } else if (type == "float") {
             return {
                 'const float ' + name + ' = stack.CurrentFloat(' + stackIndex + ');',
                 'print("' + type + ' ' + name + ': " + ' + name + ');'
-            };;
+            };
 
         } else if (type == "int") {
             return {
@@ -95,7 +95,7 @@ class MethodArgument {
         } else if (type == "string") {
             return {
                 'const string ' + name + ' = stack.CurrentString(' + stackIndex + ');',
-                'print("' + type + ' ' + name + ': " + ' + name + ');'
+                'print("' + type + ' ' + name + ': " + ' + name + '.Replace("\\n", "\\\\n"));'
             };
 
         } else if (type == "uint") {
@@ -118,7 +118,7 @@ class MethodArgument {
         } else if (type == "wstring") {
             return {
                 'const wstring ' + name + ' = stack.CurrentWString(' + stackIndex + ');',
-                'print("' + type + ' ' + name + ': " + ' + name + ');'
+                'print("' + type + ' ' + name + ': " + string(' + name + ').Replace("\\n", "\\\\n"));'
             };
 
         } else {
