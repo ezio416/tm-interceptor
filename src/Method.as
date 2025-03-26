@@ -1,5 +1,5 @@
 // c 2025-03-25
-// m 2025-03-25
+// m 2025-03-26
 
 class ClassMethod {
     MethodArgument@[] args;
@@ -28,14 +28,6 @@ class ClassMethod {
 
     bool get_active() final {
         return interception !is null && interception.active;
-    }
-
-    void RegisterInterception() {
-        RegisterInterception(InterceptDebug);
-    }
-
-    protected void RegisterInterception(ProcInterceptEx@ func) final {
-        @interception = Interception(parent.name, name, func);
     }
 
     string[]@ GenerateLines() final {
@@ -123,6 +115,14 @@ class ClassMethod {
             indent += "\t";
 
         return indent + text;
+    }
+
+    void RegisterInterception() {
+        RegisterInterception(InterceptDebug);
+    }
+
+    protected void RegisterInterception(ProcInterceptEx@ func) final {
+        @interception = Interception(parent.name, name, func);
     }
 
     void Start() final {
