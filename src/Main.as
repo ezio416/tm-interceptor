@@ -89,7 +89,7 @@ void GenerateCodeAsync() {
     trace("generating");
 
     string gen = '// Automatically generated at ' + Time::FormatStringUTC('%FT%TZ', Time::Stamp)
-        + ' for exe version ' + GetApp().SystemPlatform.ExeVersion + '\n'
+        + ' for exe version ' + cast<CTrackMania>(GetApp()).ManiaPlanetScriptAPI.ExeVersion + '\n'
     ;
 
     string CreateMethod = '#if GENERATED\nnamespace Interceptor {\n\tClassMethod@ ' +
