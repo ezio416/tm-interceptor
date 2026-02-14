@@ -38,7 +38,7 @@ void Render() {
         return;
     }
 
-    if (UI::Begin(pluginTitle, S_Enabled, UI::WindowFlags::None)) {
+    if (UI::Begin(pluginTitle, S_Enabled)) {
         RenderWindow();
     }
     UI::End();
