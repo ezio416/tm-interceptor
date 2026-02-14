@@ -1,5 +1,5 @@
 // c 2025-03-20
-// m 2025-03-26
+// m 2025-06-20
 
 const string  generatedFileStorage = IO::FromStorageFolder("_Generated.as");
 const string  pluginColor          = "\\$FFF";
@@ -11,8 +11,8 @@ const string  generatedFileSource  = pluginPath + "/src/_Generated.as";
 const string  tomlFile             = pluginPath + "/info.toml";
 const float   scale                = UI::GetScale();
 
-void OnDestroyed() { StopInterceptions(); }
-void OnDisabled()  { StopInterceptions(); }
+void OnDestroyed() { Interception::StopAll(); }
+void OnDisabled()  { Interception::StopAll(); }
 
 void Main() {
     LoadLookup();
@@ -73,11 +73,12 @@ void GenerateCodeAsync() {
     const uint64 start = Time::Now;
     trace("generating");
 
-    string gen = '// Automatically generated at ' + Time::FormatStringUTC('%F:%Tz', Time::Stamp)
+    string gen = '// Automatically generated at ' + Time::FormatStringUTC('%FT%TZ', Time::Stamp)
         + ' for exe version ' + GetApp().SystemPlatform.ExeVersion + '\n'
     ;
 
-    string CreateMethod = 'namespace Interceptor{\n\tClassMethod@ CreateMethod(GameClass@ parent, const string &in name, Json::Value@ method) {\n';
+    string CreateMethod = '#if GENERATED\nnamespace Interceptor {\n\tClassMethod@ ' +
+        'CreateMethod(GameClass@ parent, const string &in name, Json::Value@ method) {\n';
 
     string[]@ classNames = classes.GetKeys();
     for (uint i = 0; i < classNames.Length; i++) {
@@ -97,7 +98,7 @@ void GenerateCodeAsync() {
         yield();
     }
 
-    CreateMethod += '\t\treturn null;\n\t}\n}\n';
+    CreateMethod += '\t\treturn null;\n\t}\n}\n#endif\n';
 
     IO::File file(generatedFileStorage, IO::FileMode::Write);
     file.Write(gen + '\n' + CreateMethod);
@@ -137,3 +138,11 @@ void UnApplyGenerated() {
 
     Meta::ReloadPlugin(pluginMeta);
 }
+
+#if !GENERATED
+namespace Interceptor {
+    ClassMethod@ CreateMethod(GameClass@ parent, const string &in name, Json::Value@ method) {
+        return ClassMethod(parent, name, method);
+    }
+}
+#endif

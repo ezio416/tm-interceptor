@@ -13,11 +13,7 @@ class GameClass {
 
         string[]@ methodNames = classVal.GetKeys();
         for (uint i = 0; i < methodNames.Length; i++) {
-#if GENERATED
             ClassMethod@ method = Interceptor::CreateMethod(
-#else
-            ClassMethod@ method = ClassMethod(
-#endif
                 this,
                 methodNames[i],
                 classVal[methodNames[i]]

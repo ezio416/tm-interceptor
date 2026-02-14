@@ -118,7 +118,7 @@ class ClassMethod {
     }
 
     void RegisterInterception() {
-        RegisterInterception(InterceptDebug);
+        RegisterInterception(Interception::Debug);
     }
 
     protected void RegisterInterception(ProcInterceptEx@ func) final {
