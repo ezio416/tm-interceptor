@@ -1,5 +1,5 @@
-funcdef bool ProcIntercept(CMwStack &in);
-funcdef bool ProcInterceptEx(CMwStack &in, CMwNod@);
+funcdef bool ProcIntercept(CMwStack&in);
+funcdef bool ProcInterceptEx(CMwStack&in, CMwNod@);
 
 class Interception {
     bool             active = false;
@@ -7,7 +7,7 @@ class Interception {
     ProcInterceptEx@ func;
     string           procName;
 
-    Interception(const string &in className, const string &in procName, ProcInterceptEx@ func) {
+    Interception(const string&in className, const string&in procName, ProcInterceptEx@ func) {
         this.className = className;
         this.procName = procName;
         @this.func = func;
@@ -16,13 +16,15 @@ class Interception {
     ~Interception() {
         Stop();
 
-        if (active)
+        if (active) {
             error(ToString() + ": still active after destruction");
+        }
     }
 
     void Start() final {
-        if (active)
+        if (active) {
             return;
+        }
 
         try {
             Dev::InterceptProc(className, procName, func);
@@ -34,8 +36,9 @@ class Interception {
     }
 
     void Stop() final {
-        if (!active)
+        if (!active) {
             return;
+        }
 
         try {
             Dev::ResetInterceptProc(className, procName);
@@ -47,10 +50,11 @@ class Interception {
     }
 
     void Toggle() final {
-        if (active)
+        if (active) {
             Stop();
-        else
+        } else {
             Start();
+        }
     }
 
     string ToString() final {
@@ -61,11 +65,12 @@ class Interception {
 namespace Interception {
     void StopAll() {
         string[]@ classNames = classes.GetKeys();
-        for (uint i = 0; i < classNames.Length; i++)
-            cast<GameClass@>(classes[classNames[i]]).Stop();
+        for (uint i = 0; i < classNames.Length; i++) {
+            cast<GameClass>(classes[classNames[i]]).Stop();
+        }
     }
 
-    bool Basic(CMwStack &in stack, CMwNod@ nod) {
+    bool Basic(CMwStack&in stack, CMwNod@ nod) {
         const int count = stack.Count();
         const int index = stack.Index();
         const int available = count - index - 1;
@@ -78,7 +83,7 @@ namespace Interception {
         return true;
     }
 
-    bool Debug(CMwStack &in stack, CMwNod@ nod) {
+    bool Debug(CMwStack&in stack, CMwNod@ nod) {
         const int count = stack.Count();
         const int index = stack.Index();
         const int available = count - index - 1;
@@ -146,23 +151,28 @@ namespace Interception {
 
             try {
                 MwFastBuffer<CMwNod@> current = stack.CurrentBufferNod(i);
-                if (current.Length == 0 || current[0] is null)
+                if (false
+                    or current.Length == 0
+                    or current[0] is null
+                ) {
                     print(color + "  buffer<CMwNod@>");
-                else
+                } else {
                     print(color + "  buffer<" + Reflection::TypeOf(current[0]).Name + "@>");
+                }
                 continue;
             } catch { }
 
             try {
                 MwFastBuffer<string> current = stack.CurrentBufferString(i);
                 print(color + "  buffer<string>");
-                for (uint j = 0; j < current.Length; j++)
+                for (uint j = 0; j < current.Length; j++) {
                     print("    " + color + current[j].Replace("\n", "\\n"));
+                }
                 continue;
             } catch { }
 
             try {
-                MwFastBuffer<uint> current = stack.CurrentBufferUint(i);
+                auto current = stack.CurrentBufferUint(i);
                 print(color + "  buffer<uint>");
                 continue;
             } catch { }
@@ -182,8 +192,9 @@ namespace Interception {
             try {
                 MwFastBuffer<wstring> current = stack.CurrentBufferWString(i);
                 print(color + "  buffer<wstring>");
-                for (uint j = 0; j < current.Length; j++)
+                for (uint j = 0; j < current.Length; j++) {
                     print("    " + color + string(current[j]).Replace("\n", "\\n"));
+                }
                 continue;
             } catch { }
 

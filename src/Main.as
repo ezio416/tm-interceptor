@@ -8,8 +8,13 @@ const string  generatedFileSource  = pluginPath + "/src/_Generated.as";
 const string  tomlFile             = pluginPath + "/info.toml";
 const float   scale                = UI::GetScale();
 
-void OnDestroyed() { Interception::StopAll(); }
-void OnDisabled()  { Interception::StopAll(); }
+void OnDestroyed() {
+    Interception::StopAll();
+}
+
+void OnDisabled()  {
+    Interception::StopAll();
+}
 
 void Main() {
     LoadLookup();
@@ -21,29 +26,40 @@ void Main() {
 
 void Render() {
     if (false
-        || !S_Enabled
-        || (S_HideWithGame && !UI::IsGameUIVisible())
-        || (S_HideWithOP && !UI::IsOverlayShown())
-    )
+        or !S_Enabled
+        or (true
+            and S_HideWithGame
+            and !UI::IsGameUIVisible()
+        )
+        or (true
+            and S_HideWithOP
+            and !UI::IsOverlayShown()
+        )
+    ) {
         return;
+    }
 
-    if (UI::Begin(pluginTitle, S_Enabled, UI::WindowFlags::None))
+    if (UI::Begin(pluginTitle, S_Enabled, UI::WindowFlags::None)) {
         RenderWindow();
+    }
     UI::End();
 }
 
 void RenderMenu() {
-    if (UI::MenuItem(pluginTitle, "", S_Enabled))
+    if (UI::MenuItem(pluginTitle, "", S_Enabled)) {
         S_Enabled = !S_Enabled;
+    }
 }
 
 void RenderWindow() {
 #if GENERATED
-    if (UI::Button("UnApply"))
+    if (UI::Button("UnApply")) {
         UnApplyGenerated();
+    }
 #else
-    if (UI::Button("Apply"))
+    if (UI::Button("Apply")) {
         ApplyGenerated();
+    }
 #endif
 
     for (uint i = 0; i < _classes.Length; i++) {
@@ -55,10 +71,11 @@ void RenderWindow() {
             for (uint j = 0; j < Class.methods.Length; j++) {
                 ClassMethod@ method = Class.methods[j];
 
-                if (UI::Checkbox(method.name + "##" + Class.name, method.active))
+                if (UI::Checkbox(method.name + "##" + Class.name, method.active)) {
                     method.Start();
-                else
+                } else {
                     method.Stop();
+                }
             }
 
             UI::Indent(scale * -25.0f);
@@ -75,18 +92,18 @@ void GenerateCodeAsync() {
     ;
 
     string CreateMethod = '#if GENERATED\nnamespace Interceptor {\n\tClassMethod@ ' +
-        'CreateMethod(GameClass@ parent, const string &in name, Json::Value@ method) {\n';
+        'CreateMethod(GameClass@ parent, const string&in name, Json::Value@ method) {\n';
 
     string[]@ classNames = classes.GetKeys();
     for (uint i = 0; i < classNames.Length; i++) {
-        GameClass@ Class = cast<GameClass@>(classes[classNames[i]]);
+        GameClass@ Class = cast<GameClass>(classes[classNames[i]]);
 
         for (uint j = 0; j < Class.methods.Length; j++) {
             ClassMethod@ method = Class.methods[j];
 
             gen += string::Join(method.GenerateLines(), '\n');
 
-            CreateMethod += '\t\tif (parent.name == "' + Class.name + '" && name == "' + method.name
+            CreateMethod += '\t\tif (parent.name == "' + Class.name + '" and name == "' + method.name
             + '")\n\t\t\treturn Interceptor::Class_' + Class.name + '::Method_' + method.name + '(parent, name, method);\n\n';
         }
 
@@ -105,10 +122,11 @@ void GenerateCodeAsync() {
 }
 
 void ApplyGenerated() {
-    if (IO::FileExists(generatedFileStorage))
+    if (IO::FileExists(generatedFileStorage)) {
         IO::Copy(generatedFileStorage, generatedFileSource);
-    else
+    } else {
         warn("no file generated yet");
+    }
 
     IO::File toml(tomlFile, IO::FileMode::Read);
     string contents = toml.ReadToEnd();
@@ -122,8 +140,9 @@ void ApplyGenerated() {
 }
 
 void UnApplyGenerated() {
-    if (IO::FileExists(generatedFileSource))
+    if (IO::FileExists(generatedFileSource)) {
         IO::Delete(generatedFileSource);
+    }
 
     IO::File toml(tomlFile, IO::FileMode::Read);
     string contents = toml.ReadToEnd();
@@ -138,7 +157,7 @@ void UnApplyGenerated() {
 
 #if !GENERATED
 namespace Interceptor {
-    ClassMethod@ CreateMethod(GameClass@ parent, const string &in name, Json::Value@ method) {
+    ClassMethod@ CreateMethod(GameClass@ parent, const string&in name, Json::Value@ method) {
         return ClassMethod(parent, name, method);
     }
 }

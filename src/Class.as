@@ -5,7 +5,7 @@ class GameClass {
     ClassMethod@[] methods;
     string         name;
 
-    GameClass(Json::Value@ classVal, const string &in name) {
+    GameClass(Json::Value@ classVal, const string&in name) {
         this.name = name;  // needs to be set before block below
 
         string[]@ methodNames = classVal.GetKeys();
@@ -25,19 +25,22 @@ class GameClass {
     }
 
     void Start() final {
-        for (uint i = 0; i < methods.Length; i++)
+        for (uint i = 0; i < methods.Length; i++) {
             methods[i].Start();
+        }
     }
 
     void Stop() final {
-        for (uint i = 0; i < methods.Length; i++)
+        for (uint i = 0; i < methods.Length; i++) {
             methods[i].Stop();
+        }
     }
 }
 
 void AddClass(GameClass@ Class) {
-    if (Class is null)
+    if (Class is null) {
         return;
+    }
 
     if (classes.Exists(Class.name)) {
         warn("duplicate class: " + Class.name);

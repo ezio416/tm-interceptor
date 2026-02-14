@@ -5,26 +5,32 @@ class ClassMethod {
     GameClass@        parent;
     string            returnType;
 
-    ClassMethod(GameClass@ parent, const string &in name, Json::Value@ method) {
+    ClassMethod(GameClass@ parent, const string&in name, Json::Value@ method) {
         @this.parent = parent;
         this.name = name;
 
         Json::Value@ _args = method["args"];
-        for (uint i = 0; i < _args.Length; i++)
+        for (uint i = 0; i < _args.Length; i++) {
             args.InsertLast(MethodArgument(_args[i], this));
+        }
 
         if (method.HasKey("return")) {
             Json::Value@ ret = method["return"];
 
-            if (ret.GetType() == Json::Type::String)
+            if (ret.GetType() == Json::Type::String) {
                 returnType = string(ret);
-            else
+            }
+            else {
                 returnType = "null";
+            }
         }
     }
 
     bool get_active() final {
-        return interception !is null && interception.active;
+        return true
+            and interception !is null
+            and interception.active
+        ;
     }
 
     string[]@ GenerateLines() final {
@@ -39,7 +45,7 @@ class ClassMethod {
             ++count
         ));
         lines.InsertLast(Indent(
-            'Method_' + name + '(GameClass@ parent, const string &in name, Json::Value@ method) {',
+            'Method_' + name + '(GameClass@ parent, const string&in name, Json::Value@ method) {',
             ++count
         ));
         lines.InsertLast(Indent(
@@ -62,7 +68,7 @@ class ClassMethod {
 
         lines.InsertLast('');
         lines.InsertLast(Indent(
-            'bool Intercept_' + name + '(CMwStack &in stack, CMwNod@ nod) {',
+            'bool Intercept_' + name + '(CMwStack&in stack, CMwNod@ nod) {',
             count
         ));
         lines.InsertLast(Indent(
@@ -106,10 +112,11 @@ class ClassMethod {
         return lines;
     }
 
-    private string Indent(const string &in text, uint count) {
+    private string Indent(const string&in text, uint count) {
         string indent;
-        for (uint i = 0; i < count; i++)
+        for (uint i = 0; i < count; i++) {
             indent += "\t";
+        }
 
         return indent + text;
     }
@@ -123,12 +130,14 @@ class ClassMethod {
     }
 
     void Start() final {
-        if (interception !is null)
+        if (interception !is null) {
             interception.Start();
+        }
     }
 
     void Stop() final {
-        if (interception !is null)
+        if (interception !is null) {
             interception.Stop();
+        }
     }
 }

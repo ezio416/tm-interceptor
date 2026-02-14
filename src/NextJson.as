@@ -48,31 +48,33 @@ void FilterLookupNoMethodsAsync() {
 
         Json::Value@ object = lookup.Get(className);
         if (false
-            || object is null
-            || object.GetType() != Json::Type::Object
-            || !object.HasKey("m")
-        )
+            or object is null
+            or object.GetType() != Json::Type::Object
+            or !object.HasKey("m")
+        ) {
             continue;
+        }
 
         Json::Value@ members = object.Get("m");
         if (false
-            || members is null
-            || members.GetType() != Json::Type::Array
-            || members.Length == 0
-        )
+            or members is null
+            or members.GetType() != Json::Type::Array
+            or members.Length == 0
+        ) {
             continue;
+        }
 
         Json::Value@ someClass = Json::Object();
 
         for (uint j = 0; j < members.Length; j++) {
             Json::Value@ member = members[j];
 
-            // if (member.HasKey("a") && member.HasKey("r")) {
+            // if (member.HasKey("a") and member.HasKey("r")) {
             if (member.HasKey("t")) {
                 Json::Value@ type = member["t"];
 
                 if (type.GetType() == Json::Type::Number
-                    // && (int(type) == 0 || int(type) == 1)
+                    // and (int(type) == 0 or int(type) == 1)
                 ) {
                     Json::Value@ method = Json::Object();
 
