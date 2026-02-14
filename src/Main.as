@@ -109,9 +109,28 @@ void GenerateCodeAsync() {
     const uint64 start = Time::Now;
     trace("generating");
 
+#if TMNEXT || MP4 || TURBO
+    string exe = cast<CTrackMania>(GetApp()).ManiaPlanetScriptAPI.ExeVersion;
+#elif FOREVER
+    string exe = "unknown";
+#endif
+
     string gen = '// Automatically generated at ' + Time::FormatStringUTC('%FT%TZ', Time::Stamp)
-        + ' for exe version ' + cast<CTrackMania>(GetApp()).ManiaPlanetScriptAPI.ExeVersion + '\n'
-    ;
+        + ' for exe version ' + exe;
+
+#if TMNEXT
+    gen += ' (NEXT)';
+#elif MP4
+    gen += ' (MP4)';
+#elif TURBO
+    gen += ' (TURBO)';
+#elif UNITED_FOREVER
+    gen += ' (UNITED_FOREVER)';
+#elif NATIONS_FOREVER
+    gen += ' (NATIONS FOREVER)';
+#endif
+
+    gen += '\n';
 
     string CreateMethod = '#if GENERATED\nnamespace Interceptor {\n\tClassMethod@ ' +
         'CreateMethod(GameClass@ parent, const string&in name, Json::Value@ method) {\n';
