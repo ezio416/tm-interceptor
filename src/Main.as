@@ -6,7 +6,6 @@ const string  pluginTitle          = pluginColor + pluginIcon + "\\$G " + plugin
 const string  pluginPath           = pluginMeta.SourcePath;
 const string  generatedFileSource  = pluginPath + "/src/_Generated.as";
 const string  tomlFile             = pluginPath + "/info.toml";
-const float   scale                = UI::GetScale();
 
 void OnDestroyed() {
     Interception::StopAll();
@@ -52,6 +51,8 @@ void RenderMenu() {
 }
 
 void RenderWindow() {
+    const float scale = UI::GetScale();
+
 #if GENERATED
     if (UI::Button("UnApply")) {
         UnApplyGenerated();
