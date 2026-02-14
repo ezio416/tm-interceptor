@@ -1,6 +1,3 @@
-// c 2025-03-25
-// m 2025-03-25
-
 [Setting category="General" name="Enabled"]
 bool S_Enabled = true;
 

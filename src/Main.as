@@ -1,6 +1,3 @@
-// c 2025-03-20
-// m 2025-06-20
-
 const string  generatedFileStorage = IO::FromStorageFolder("_Generated.as");
 const string  pluginColor          = "\\$FFF";
 const string  pluginIcon           = Icons::Code;

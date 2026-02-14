@@ -1,6 +1,3 @@
-// c 2025-03-25
-// m 2025-03-26
-
 const string CYAN     = "\\$0FD";
 const string DARKGRAY = "\\$777";  // trace
 const string DARKRED  = "\\$A00";

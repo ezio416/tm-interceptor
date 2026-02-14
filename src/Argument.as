@@ -1,6 +1,3 @@
-// c 2025-03-25
-// m 2025-03-26
-
 class MethodArgument {
     int          index      = -1;
     string       name;

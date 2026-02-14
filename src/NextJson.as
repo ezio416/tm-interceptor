@@ -1,6 +1,3 @@
-// c 2025-03-22
-// m 2025-03-26
-
 Json::Value@ lookup     = Json::Object();
 const string lookupFile = IO::FromDataFolder("OpenplanetNext.json");
 

@@ -1,6 +1,3 @@
-// c 2025-03-26
-// m 2025-03-26
-
 bool SortClassMethod(const ClassMethod@ const &in a, const ClassMethod@ const &in b) {
     return true
         && a !is null

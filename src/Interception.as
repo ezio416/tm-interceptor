@@ -1,6 +1,3 @@
-// c 2025-03-21
-// m 2025-03-26
-
 funcdef bool ProcIntercept(CMwStack &in);
 funcdef bool ProcInterceptEx(CMwStack &in, CMwNod@);
 
