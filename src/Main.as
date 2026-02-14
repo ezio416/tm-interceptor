@@ -1,4 +1,5 @@
 const string  generatedFileStorage = IO::FromStorageFolder("_Generated.as");
+bool          generating           = false;
 const string  pluginColor          = "\\$FFF";
 const string  pluginIcon           = Icons::Code;
 Meta::Plugin@ pluginMeta           = Meta::ExecutingPlugin();
@@ -63,11 +64,23 @@ void RenderWindow() {
     }
 #endif
 
+    if (generating) {
+        UI::SameLine();
+        UI::TextDisabled("generating...");
+    }
+
     for (uint i = 0; i < _classes.Length; i++) {
         GameClass@ Class = _classes[i];
 
         if (UI::CollapsingHeader(Class.name + " (" + Class.methods.Length + ")")) {
             UI::Indent(scale * 25.0f);
+
+            UI::BeginDisabled(false
+#if !GENERATED
+                or true
+#endif
+                or generating
+            );
 
             for (uint j = 0; j < Class.methods.Length; j++) {
                 ClassMethod@ method = Class.methods[j];
@@ -79,12 +92,20 @@ void RenderWindow() {
                 }
             }
 
+            UI::EndDisabled();
+
             UI::Indent(scale * -25.0f);
         }
     }
 }
 
 void GenerateCodeAsync() {
+    if (generating) {
+        return;
+    }
+
+    generating = true;
+
     const uint64 start = Time::Now;
     trace("generating");
 
@@ -118,6 +139,8 @@ void GenerateCodeAsync() {
     IO::File file(generatedFileStorage, IO::FileMode::Write);
     file.Write(gen + '\n' + CreateMethod);
     file.Close();
+
+    generating = false;
 
     trace("generated after " + (Time::Now - start) + "ms");
 }
