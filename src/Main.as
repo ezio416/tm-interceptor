@@ -120,7 +120,7 @@ void ApplyGenerated() {
     toml.Write(contents.Replace("#defines", "defines"));
     toml.Close();
 
-    Reloader::ReloadMe();
+    Meta::ReloadPlugin(pluginMeta);
 }
 
 void UnApplyGenerated() {
@@ -135,5 +135,5 @@ void UnApplyGenerated() {
     toml.Write(contents.Replace("defines", "#defines"));
     toml.Close();
 
-    Reloader::ReloadMe();
+    Meta::ReloadPlugin(pluginMeta);
 }
