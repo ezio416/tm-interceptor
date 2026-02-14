@@ -1,5 +1,16 @@
-Json::Value@ lookup     = Json::Object();
+Json::Value@ lookup = Json::Object();
+
+#if TMNEXT
 const string lookupFile = IO::FromDataFolder("OpenplanetNext.json");
+#elif MP4
+const string lookupFile = IO::FromDataFolder("Openplanet4.json");
+#elif TURBO
+const string lookupFile = IO::FromDataFolder("OpenplanetTurbo.json");
+#elif UNITED_FOREVER
+const string lookupFile = IO::FromDataFolder("OpenplanetUnited.json");
+#elif NATIONS_FOREVER
+const string lookupFile = IO::FromDataFolder("OpenplanetNations.json");  // guessing
+#endif
 
 void LoadLookup() {
     const uint64 start = Time::Now;
