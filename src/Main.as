@@ -127,7 +127,7 @@ void GenerateCodeAsync() {
 #elif UNITED_FOREVER
     gen += ' (UNITED_FOREVER)';
 #elif NATIONS_FOREVER
-    gen += ' (NATIONS FOREVER)';
+    gen += ' (NATIONS_FOREVER)';
 #endif
 
     gen += '\n';
