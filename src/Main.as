@@ -142,7 +142,7 @@ void GenerateCodeAsync() {
         for (uint j = 0; j < Class.methods.Length; j++) {
             ClassMethod@ method = Class.methods[j];
 
-            gen += string::Join(method.GenerateLines(), '\n');
+            gen += Text::Join(method.GenerateLines(), '\n');
 
             CreateMethod += '\t\tif (parent.name == "' + Class.name + '" and name == "' + method.name
             + '")\n\t\t\treturn Interceptor::Class_' + Class.name + '::Method_' + method.name + '(parent, name, method);\n\n';
